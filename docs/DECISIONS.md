@@ -22,3 +22,6 @@ Possible AI NN Types:
 - Neural networks are computing systems consisting of interconnected nodes (neurons) organized in layers that process data to learn patterns, make predictions, or generate outputs. They take input data, apply mathematical weights and biases through layers, and adjust these parameters during training to minimize errors on tasks like classification or generation.
 - Signals are passed forwards, then an activation function decides if the neuron "fires". 
 - Training involves feeding data, calculating errors via backpropagation, and optimizing with algorithms like gradient descent to improve accuracy on complex, non-linear problems.
+
+## Sources
+[Guide for training ANN](https://pytorch.org/tutorials/beginner/introyt/trainingyt.html://)
