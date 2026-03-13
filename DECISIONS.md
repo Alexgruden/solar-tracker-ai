@@ -6,7 +6,7 @@ This document records the key technical decisions made during development of the
 
 ## Data Scope
 
-**Decision:** Filter to daytime hours only (`Solar_Altitude > 0`), reducing the dataset from 3,672 to 2,070 samples.
+**Decision:** Filter to daytime hours only (`Solar_Altitude > 0`), retaining 4,110 daytime samples from the 2019 dataset.
 
 **Reasoning:** Nighttime rows always produce zero energy output by definition. Including them would add trivial samples that the model could exploit without learning anything meaningful about the solar-energy relationship. Training on daytime-only data keeps the model focused on the pattern that actually matters.
 
@@ -24,7 +24,7 @@ This document records the key technical decisions made during development of the
 
 **Decision:** Use three input features: Solar Altitude, Azimuth Sin, Azimuth Cos. Exclude timestamp and installed capacity columns.
 
-**Reasoning:** Solar altitude and azimuth are the physical quantities that govern how much sunlight reaches the panels. Timestamps are a proxy for sun position, not the cause of generation — using them directly would be a form of data leakage that wouldn't generalise to different years or locations. `DPV_Combined_MW` represents slowly-incrementing installed capacity, not actual hourly generation, so it was excluded to avoid training on the wrong signal.
+**Reasoning:** Solar altitude and azimuth are the physical quantities that govern how much sunlight reaches the panels. Timestamps are a proxy for sun position, not the cause of generation — using them directly would be a form of data leakage that would not generalise to different years or locations. `DPV_Combined_MW` represents slowly-incrementing installed capacity, not actual hourly generation, so it was excluded to avoid training on the wrong signal.
 
 ---
 
@@ -80,7 +80,7 @@ This document records the key technical decisions made during development of the
 
 **Decision:** Two hidden layers, each with 32 neurons and ReLU activation.
 
-**Reasoning:** The task is a low-dimensional regression problem with 3 inputs and 1 output. A small network is appropriate — a large one would risk overfitting on 2,070 samples. Two layers of 32 neurons is sufficient capacity to model the non-linear relationship between sun position and energy output without overcomplicating the architecture.
+**Reasoning:** The task is a low-dimensional regression problem with 3 inputs and 1 output. A small network is appropriate — a large one would risk overfitting on roughly 2,800 training samples. Two layers of 32 neurons is sufficient capacity to model the non-linear relationship between sun position and energy output without overcomplicating the architecture.
 
 ---
 

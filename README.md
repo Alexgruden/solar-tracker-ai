@@ -14,11 +14,12 @@ This project trains a feedforward Artificial Neural Network (ANN) to predict hou
 
 ```
 .
-├── Copy_of_Optimizing_Solar_Tracking_using_AI.ipynb  # Full experiment and analysis
-├── ann_solar_model.pth                               # Saved ANN model weights
-├── requirements.txt                                  # Python dependencies
-├── DECISIONS.md                                      # Design decisions and motivation
-├── TODO.md                                           # To-do list: Planned Updates 
+├── Optimizing_Solar_Tracking_using_AI.ipynb  # Full experiment and analysis
+├── ann_solar_model.pth                       # Saved ANN model weights
+├── requirements.txt                          # Python dependencies
+├── docs/
+│   ├── DECISIONS.md                          # Design decisions and motivation
+│   └── CHANGELOG.md                          # Bug fixes and version history
 └── README.md
 ```
 
@@ -33,7 +34,7 @@ County-level hourly distributed PV generation data sourced from the Lawrence Ber
 - **Source:** [OEDI — Solar-to-Grid Public Data File](https://data.openei.org/submissions/4503)
 - **DOI:** [10.25984/1825661](https://doi.org/10.25984/1825661)
 - **File used:** `13123.csv` — FIPS code for Gilmer County, Georgia (FIPS: 13-123)
-- **Time range:** May 1, 2019 – October 1, 2019 (daytime hours only)
+- **Time range:** January 1 – December 1, 2019 (daytime hours only, 4,110 samples)
 
 To reproduce this experiment, download the `Hourly Generation by Plant and County.zip` file from the link above and place `13123.csv` in the project root.
 
@@ -42,7 +43,7 @@ To reproduce this experiment, download the `Hourly Generation by Plant and Count
 ## Methodology
 
 **1. Data Pruning**
-Raw hourly generation data is filtered to the peak solar season (May–September 2019). Residential and non-residential distributed PV values are combined into a single `DPV_Combined_MWh` column. Nighttime rows where solar altitude ≤ 0 are excluded, reducing the dataset from 3,672 to 2,070 daytime samples.
+Raw hourly generation data is filtered to 2019. Residential and non-residential distributed PV values are combined into a single `DPV_Combined_MWh` column. Nighttime rows where solar altitude ≤ 0 are excluded, retaining 4,110 daytime samples.
 
 **2. Feature Engineering**
 Solar altitude and azimuth are computed per timestamp using `pysolar` at the coordinates for Gilmer County, GA (34.77°N, -84.57°W). Azimuth is encoded as sine and cosine components to avoid the 0°/360° angular discontinuity.
@@ -60,6 +61,7 @@ A three-layer feedforward ANN implemented in PyTorch:
 - Batch size: 64
 - Epochs: 100
 - Split: 70% train / 15% validation / 15% test
+- Random seed: 42 (fully reproducible)
 
 **5. Evaluation**
 Performance measured using MAE and RMSE on the held-out test set.
@@ -68,11 +70,11 @@ Performance measured using MAE and RMSE on the held-out test set.
 
 ## Results
 
-| Model | Location | Data Period | Test MAE | Test RMSE | Date Run |
-|-------|----------|-------------|----------|-----------|----------|
-| ANN | Gilmer County, GA | May–Sep 2019 | 0.005151 MWh | 0.007584 MWh | Mar 6, 2026 |
+| Model | Location | Data Period | Test MAE | Test RMSE |
+|-------|----------|-------------|----------|-----------|
+| ANN | Gilmer County, GA | 2019 (daytime) | 0.006968 MWh | 0.009339 MWh |
 
-On a target range of 0–0.047 MWh, the ANN achieves approximately 11% mean absolute error, converging smoothly with no signs of overfitting.
+On a target range of 0–0.049 MWh, the ANN achieves approximately 14% mean absolute error, converging smoothly with no signs of overfitting. Results are fully reproducible — set random seed 42 before running.
 
 ---
 
@@ -94,7 +96,7 @@ pip install -r requirements.txt
 
 Open the notebook directly:
 ```bash
-jupyter notebook Copy_of_Optimizing_Solar_Tracking_using_AI.ipynb
+jupyter notebook Optimizing_Solar_Tracking_using_AI.ipynb
 ```
 
 To load the saved model weights without retraining:
